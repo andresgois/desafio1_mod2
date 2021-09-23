@@ -30,6 +30,8 @@ class UsersRepository implements IUsersRepository {
     });
 
     this.users.push(user);
+
+    return user;
   }
 
   findById(id: string): User | undefined {
@@ -46,6 +48,11 @@ class UsersRepository implements IUsersRepository {
     /* eslint no-param-reassign: "error" */
     receivedUser.admin = true;
     receivedUser.updated_at = new Date();
+    // Object.assign(receivedUser, {
+    //   admin: true,
+    //   updated_at: new Date(),
+    // });
+
     return receivedUser;
   }
 
