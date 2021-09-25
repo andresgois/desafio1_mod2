@@ -1,0 +1,270 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Desafio Swagger",
+    "description": "Essa é uma documentação sobre a Atlas API",
+    "version": "1.0.0"
+  },
+  "tags": [
+    {
+      "name": "users",
+      "description": "Gerenciamento de usuários"
+    }
+  ],
+  "paths": {
+    "/users": {
+      "post": {
+        "tags": [
+          "users"
+        ],
+        "summary": "Cria um novo usuário",
+        "requestBody": {
+          "description": "Campos obrigatórios para criação de um usuário",
+          "content": {
+            "application/json": {
+              "required": true,
+              "schema": {
+                "$ref": "#/components/schemas/user"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Operação realizada com sucesso.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Email já está sendo utilizado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/emailExists"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get":{
+        "tags": ["users"],
+        "summary": "Retorna todos os usuários",
+        "description":"Somente usuários `admin` pode acessar.",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operação realizada com sucesso.",
+            "content": {
+              "application/json": {
+                "schema": {
+                    "$ref": "#/components/schemas/Users"
+
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Usuário sem permissão ou usuário não encontrado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/emailPermission"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/{user_id}":{
+      "get":{
+        "tags":["users"],
+        "summary": "Retorna um usuário específico.",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "description": "ID do usuário",
+            "required": true,
+            "style": "path-simple" 
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operação realizada com sucesso.",
+            "content": {
+              "application/json": {
+                "schema": {
+                    "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Usuário não encontrado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/userNotFound"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/{user_id}/admin":{
+      "patch":{
+        "tags":["users"],
+        "summary": "Torna admin um usuário.",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operação realizada com sucesso.",
+            "content": {
+              "application/json": {
+                "schema": {
+                    "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Usuário não encontrado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/userNotFound"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "user": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          }
+        },
+        "example": {
+          "name": "user name",
+          "email": "user@email.com"
+        }
+      },
+      "User": {
+          "type": "object",
+          "properties": {
+            "admin": {
+              "type": "boolean",
+              "default": true
+            },
+            "id": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "name": {
+              "type": "string",
+              "example": "Teste"
+            },
+            "email": {
+              "type": "string",
+              "format": "email"
+            },
+            "created_at": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "updated_at": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+      },
+      "Users": {
+          "type": "object",
+            "example":[{
+              "admin": true,
+              "id": "uuid",
+              "name": "Teste 01",
+              "email": "teste1@email.com",
+              "created_at": "2021-09-25T14:47:52.814Z",
+              "updated_at": "2021-09-25T14:47:52.814Z"
+            },
+            {
+              "admin": false,
+              "id": "uuid",
+              "name": "Teste 02",
+              "email": "teste2@email.com",
+              "created_at": "2021-09-25T14:47:52.814Z",
+              "updated_at": "2021-09-25T14:47:52.814Z"
+            }        
+          ]
+        
+      },
+        "emailExists":{
+          "type": "object",
+          "properties":{
+            "error": {
+              "type": "string",
+              "example": "This email is already in use"
+            }
+          }
+        },
+        "emailPermission":{
+          "type": "object",
+          "properties":{
+            "error": {
+              "type": "string",
+              "example": "You need to be an administrator to list all users."
+            }
+          }
+        },
+        "userNotFound": {
+          "type": "object",
+          "properties":{
+            "error": {
+              "type": "string",
+              "example": "User not found"
+            }
+          }
+        }
+      
+    }
+  }
+}
