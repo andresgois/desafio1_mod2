@@ -29,3 +29,4 @@ A rota deve receber, pelo header da requisição, uma propriedade `user_id` cont
 ### URL Documentação
 - http://localhost:3333/api-docs/
 
+- Dados para exportação para Insomnia ou Postman, estão na pasta collection na raiz do projeto
